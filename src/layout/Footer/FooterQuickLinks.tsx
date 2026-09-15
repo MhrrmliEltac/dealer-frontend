@@ -8,10 +8,10 @@ import { Mail, MapPin, Phone } from "lucide-react";
 const cardClassName =
   "bg-[#1E1E1E] rounded-[20px] w-full gap-6 sm:gap-8 lg:gap-10";
 const cardTitleClassName =
-  "text-white font-bold text-xl sm:text-2xl lg:text-3xl leading-snug lg:leading-11.25 text-center";
-const listClassName = "flex flex-col items-start justify-start w-fit mx-auto";
+  "text-white font-bold text-xl sm:text-2xl lg:text-3xl leading-snug lg:leading-11.25 md:text-center";
+const listClassName = "flex flex-col items-start justify-start w-fit md:mx-auto";
 const itemTextClassName =
-  "text-[#B2B2B2] font-regulan text-base sm:text-xl lg:text-3xl leading-snug lg:leading-11.25";
+  "text-[#B2B2B2] font-regular text-base sm:text-xl lg:text-3xl leading-snug lg:leading-11.25";
 
 const FooterQuickLinks = () => {
   const { data } = useContactQuery();
