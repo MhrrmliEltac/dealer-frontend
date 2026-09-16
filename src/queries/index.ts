@@ -29,3 +29,5 @@ export {
   useCreateAboutMutation,
   useDeleteAboutMutation,
 } from "./about.queries";
+
+export { useCreateSuggestionMutation } from "./suggestion.queries";

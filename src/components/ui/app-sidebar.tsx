@@ -2,36 +2,95 @@ import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { nav, services } from "@/layout/Footer/data";
-import { NavLink, useNavigate } from "react-router";
-
-type AppSidebarProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
+import { sidebarNav, type NavItem } from "@/layout/Footer/data";
+import { NavLink } from "react-router";
+import { sidebarStore, useSidebarOpen } from "@/lib/sidebar-store";
+import { Card, CardContent, CardHeader } from "./card";
+import { Controller, useForm, type SubmitHandler } from "react-hook-form";
+import {
+  contactSchema,
+  type ContactFormValues,
+} from "@/validation/contactSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./field";
+import { Input } from "./input";
+import { Textarea } from "./textarea";
+import {
+  PHONE_PREFIX,
+  sanitizePhoneValue,
+} from "@/lib/helper/sanitize-phone-value";
+import { useCreateSuggestionMutation } from "@/queries";
 
 const groupLabelClassName = "px-2 text-xs font-medium text-white/50";
 const navListClassName = "flex flex-col gap-1";
 const linkClassName =
   "rounded-md px-2 py-2 text-sm text-white/80 transition-colors hover:bg-white/10 hover:text-white aria-[current=page]:bg-white/10 aria-[current=page]:text-white";
 
-const AppSidebar = ({ open, onOpenChange }: AppSidebarProps) => {
-  const navigate = useNavigate();
+const AppSidebar = () => {
+  const open = useSidebarOpen();
+  const { control, handleSubmit, setValue, reset } = useForm<ContactFormValues>(
+    {
+      resolver: zodResolver(contactSchema),
+      defaultValues: {
+        fullname: "",
+        phone_number: "",
+        suggestion: "",
+      },
+    },
+  );
+  const mutate = useCreateSuggestionMutation();
 
-  const close = () => onOpenChange(false);
+  const handlePhoneFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (!event.target.value) {
+      setValue("phone_number", PHONE_PREFIX);
+    }
+  };
 
-  const handleDealerProfile = () => {
-    close();
-    navigate("/auth/login");
+  const handlePhoneChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: string) => void,
+  ) => {
+    onChange(sanitizePhoneValue(event.target.value));
+  };
+
+  const handlePhoneKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Backspace" && event.key !== "Delete") return;
+    const { selectionStart, selectionEnd } = event.currentTarget;
+    if (selectionStart === null || selectionEnd === null) return;
+
+    const touchesPrefix =
+      selectionStart < PHONE_PREFIX.length ||
+      (event.key === "Backspace" &&
+        selectionStart === PHONE_PREFIX.length &&
+        selectionStart === selectionEnd);
+
+    if (touchesPrefix) {
+      event.preventDefault();
+    }
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    sidebarStore.setOpen(nextOpen);
+    if (!nextOpen) {
+      reset();
+    }
+  };
+
+  const close = () => {
+    handleOpenChange(false);
+  };
+
+  const onSubmit: SubmitHandler<ContactFormValues> = (data) => {
+    mutate.mutate(data);
+    mutate.isSuccess && reset();
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetContent
         side="left"
         className="flex flex-col gap-6 bg-black text-white"
@@ -56,7 +115,7 @@ const AppSidebar = ({ open, onOpenChange }: AppSidebarProps) => {
               <NavLink to="/" end onClick={close} className={linkClassName}>
                 Ana səhifə
               </NavLink>
-              {nav.map((item) => (
+              {sidebarNav.map((item: NavItem) => (
                 <NavLink
                   key={item.id}
                   to={item.url}
@@ -68,30 +127,92 @@ const AppSidebar = ({ open, onOpenChange }: AppSidebarProps) => {
               ))}
             </nav>
           </div>
-          <div className="flex flex-col gap-1">
-            <span className={groupLabelClassName}>Xidmətlər</span>
-            <nav className={navListClassName}>
-              {services.map((item) => (
-                <NavLink
-                  key={item.id}
-                  to={item.url}
-                  onClick={close}
-                  className={linkClassName}
+
+          <Card>
+            <CardHeader>
+              <span className="text-[#FF6200] text-base">
+                ÇƏTİNLİYİNİZ VAR?
+              </span>
+            </CardHeader>
+
+            <CardContent>
+              <form id="contact-form" onSubmit={handleSubmit(onSubmit)}>
+                <FieldGroup>
+                  <Controller
+                    name="fullname"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel>TAM ADINIZ</FieldLabel>
+                        <Input
+                          {...field}
+                          id={field.name}
+                          type="text"
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Məs: Əli Əliyev"
+                          className="bg-black text-white rounded-[10px] border-none outline-none h-16.5"
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="phone_number"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel>NÖMRƏNİZ</FieldLabel>
+                        <Input
+                          {...field}
+                          onFocus={handlePhoneFocus}
+                          onChange={(event) =>
+                            handlePhoneChange(event, field.onChange)
+                          }
+                          onKeyDown={handlePhoneKeyDown}
+                          id={field.name}
+                          type="text"
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Məs: 050 123 45 67"
+                          className="bg-black text-white rounded-[10px] border-none outline-none h-16.5"
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="suggestion"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel>QISA MESAJINIZ</FieldLabel>
+                        <Textarea
+                          {...field}
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                          placeholder="Məs: Mənim avtomobilim var..."
+                          className="bg-black text-white rounded-[10px] border-none outline-none h-16.5 resize-none"
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+                <Button
+                  type="submit"
+                  className="bg-[#FF6200] w-full mt-4 px-4 py-2 sm:px-7.25 sm:pt-2.25 sm:pb-3 rounded-[10px] sm:h-14.25"
                 >
-                  {item.title}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
+                  <span className="font-bold text-md  text-white">Göndər</span>
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-        <SheetFooter>
-          <Button
-            onClick={handleDealerProfile}
-            className="bg-[#FF6200] w-full rounded-[10px] h-10"
-          >
-            <span className="font-bold text-white">Dealer Profile</span>
-          </Button>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

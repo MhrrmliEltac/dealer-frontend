@@ -21,15 +21,14 @@ import { useSignInMutation } from "@/queries";
 
 const LoginPage = () => {
   const mutate = useSignInMutation();
-  const { control, handleSubmit, resetField, reset } =
-    useForm<SignInFormValues>({
-      resolver: zodResolver(signInSchema),
-      defaultValues: {
-        email: "",
-        password: "",
-        rememberMe: false,
-      },
-    });
+  const { control, handleSubmit, reset } = useForm<SignInFormValues>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+      rememberMe: false,
+    },
+  });
 
   const onSubmit: SubmitHandler<SignInFormValues> = (data) => {
     mutate.mutate(data);

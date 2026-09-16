@@ -1,12 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { sidebarStore } from "@/lib/sidebar-store";
 import { Menu } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 
-type HeaderProps = {
-  onMenuClick: () => void;
-};
-
-const Header = ({ onMenuClick }: HeaderProps) => {
+const Header = () => {
   const navigate = useNavigate();
 
   const handleRoute = () => {
@@ -17,7 +14,7 @@ const Header = ({ onMenuClick }: HeaderProps) => {
     <header className="border-b border-b-white">
       <section className="flex flex-wrap justify-between items-center gap-4 px-4 sm:px-8 lg:px-16 py-3 lg:py-0 lg:h-29.25 max-w-360 mx-auto">
         <button
-          onClick={onMenuClick}
+          onClick={sidebarStore.open}
           className="flex items-center gap-2 sm:gap-2.5 cursor-pointer order-last sm:order-0"
         >
           <Menu className="text-white size-5 sm:size-6" />

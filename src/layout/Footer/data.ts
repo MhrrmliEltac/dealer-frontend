@@ -1,21 +1,31 @@
-const nav = [
+type NavItem = {
+  id: number;
+  title: string;
+  url: string;
+};
+
+const generateId = (): number => {
+  return Math.floor(Math.random() * 1000000) + Date.now();
+};
+
+const nav: NavItem[] = [
   {
-    id: 1,
+    id: generateId(),
     title: "Haqqımızda",
     url: "/about",
   },
   {
-    id: 2,
+    id: generateId(),
     title: "Manheim",
     url: "/manheim",
   },
   {
-    id: 3,
+    id: generateId(),
     title: "Əməkdaşlıq",
     url: "/cooperation",
   },
   {
-    id: 4,
+    id: generateId(),
     title: "Əlaqə",
     url: "/contact",
   },
@@ -23,25 +33,58 @@ const nav = [
 
 const services = [
   {
-    id: 1,
+    id: generateId(),
     title: "Avtomobil çatdırılması",
     url: "/car-delivery",
   },
   {
-    id: 2,
+    id: generateId(),
     title: "Elektromobillər",
     url: "/electric-cars",
   },
   {
-    id: 3,
+    id: generateId(),
     title: "Gömrük rəsmiləşdirilməsi",
     url: "/customs-clearance",
   },
   {
-    id: 4,
+    id: generateId(),
     title: "Rüsum kakulyatoru",
     url: "/duty-calculator",
   },
 ];
 
-export { nav, services };
+const sidebarNav: NavItem[] = [
+  {
+    id: generateId(),
+    title: "Haqqımızda",
+    url: "/about",
+  },
+  {
+    id: generateId(),
+    title: "Manheim",
+    url: "/manheim",
+  },
+  {
+    id: generateId(),
+    title: "Əlaqə",
+    url: "/contact",
+  },
+  {
+    id: generateId(),
+    title: "Tracking",
+    url: "/tracking",
+  },
+  {
+    id: generateId(),
+    title: "Üstünlüklərimiz",
+    url: "/advantages",
+  },
+  {
+    id: generateId(),
+    title: "Konsultasiya",
+    url: "/consultation",
+  },
+];
+
+export { nav, services, sidebarNav, type NavItem };

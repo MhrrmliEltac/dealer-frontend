@@ -10,7 +10,7 @@ function Toaster() {
       <ToastPrimitive.Portal>
         <ToastPrimitive.Viewport
           data-slot="toast-viewport"
-          className="fixed top-auto right-4 bottom-4 z-50 mx-auto flex w-[calc(100vw-2rem)] flex-col outline-none sm:right-8 sm:bottom-8 sm:w-96"
+          className="fixed top-auto right-4 bottom-4 z-[100] mx-auto flex w-[calc(100vw-2rem)] flex-col outline-none sm:right-8 sm:bottom-8 sm:w-96"
         >
           <ToastList />
         </ToastPrimitive.Viewport>
