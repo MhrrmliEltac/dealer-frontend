@@ -19,7 +19,7 @@ const Header = () => {
         >
           <Menu className="text-white size-5 sm:size-6" />
           <span className="text-white font-semibold text-lg sm:text-2xl lg:text-3xl">
-            MENYU
+            Menyu
           </span>
         </button>
         <Link to="/" className="flex items-center justify-center">

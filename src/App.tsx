@@ -2,6 +2,8 @@ import { Route, Routes } from "react-router";
 import { HomePage, LoginPage, RegisterPage } from "./pages";
 import { AuthLayout, MainLayout } from "./layout";
 import { Toaster } from "@/components/ui/toast";
+import CalculationPage from "./pages/Calculation";
+import AdvantagePage from "./pages/Advantage";
 
 const App = () => {
   return (
@@ -10,6 +12,8 @@ const App = () => {
       <Routes>
         <Route element={<MainLayout />}>
           <Route index element={<HomePage />} />
+          <Route path="/calculation" element={<CalculationPage />} />
+          <Route path="/advantages" element={<AdvantagePage />} />
         </Route>
         <Route element={<AuthLayout />}>
           <Route path="/auth/login" element={<LoginPage />} />
